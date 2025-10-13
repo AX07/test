@@ -485,9 +485,9 @@ const AppContent: React.FC = () => {
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
-            <div className="flex-grow rounded-t-2xl overflow-hidden">
+            <div className="flex-grow rounded-t-2xl overflow-hidden bg-white">
                 <iframe
-                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0167PaK4gkglb-8diXPCzvZM2sz4ZqKNiCernRxnmLAjpnjvllox8tT5hFTKojodg2nkjA4DPj?gv=true&bgcolor=%231A202C"
+                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0167PaK4gkglb-8diXPCzvZM2sz4ZqKNiCernRxnmLAjpnjvllox8tT5hFTKojodg2nkjA4DPj?gv=true"
                 width="100%"
                 height="100%"
                 frameBorder="0"
