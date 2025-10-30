@@ -10,7 +10,7 @@ export enum View {
   Resources = 'RESOURCES',
 }
 
-export type Page = 'intro' | 'about' | 'app' | 'resources';
+export type Page = 'intro' | 'about' | 'app' | 'resources' | 'blog' | 'admin';
 
 export interface CompletedSimulation {
   id: string;
@@ -68,4 +68,14 @@ export interface QuizQuestion {
     isCorrect: boolean;
   }[];
   explanation: string;
+}
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  imageUrl: string;
+  publishedAt: string;
 }

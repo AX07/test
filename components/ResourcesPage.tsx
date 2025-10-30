@@ -16,7 +16,7 @@ interface ResourcesPageProps {
 const ResourceCard: React.FC<{ item: ResourceItem }> = ({ item }) => (
     <a href={item.link} target="_blank" rel="noopener noreferrer" className="block h-full">
         <Card className="p-4 h-full bg-brand-bg/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-brand-primary/50 flex items-center gap-4">
-            <img src={item.logoUrl} alt={`${item.name} logo`} className="h-12 w-12 object-contain flex-shrink-0 bg-white/10 rounded-full p-1" />
+            <img src={item.logoUrl} alt={`${item.name} logo`} className="h-12 w-12 object-contain flex-shrink-0 bg-white/10 rounded-full p-1" loading="lazy" decoding="async" />
             <div>
                 <h4 className="font-bold text-white">{item.name}</h4>
                 <p className="text-xs text-brand-text-secondary">{item.description}</p>
@@ -29,7 +29,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('');
-    const { language, toggleLanguage, t } = useLanguage();
+    const { language, setLanguage, t } = useLanguage();
     const RESOURCES_DATA = GET_RESOURCES_DATA(t);
 
     const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -45,13 +45,15 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
             });
         }, observerOptions);
 
-        Object.values(sectionRefs.current).forEach(section => {
+        Object.keys(sectionRefs.current).forEach(key => {
+            const section = sectionRefs.current[key];
             if (section) observer.observe(section);
         });
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            Object.values(sectionRefs.current).forEach(section => {
+            Object.keys(sectionRefs.current).forEach(key => {
+                const section = sectionRefs.current[key];
                 if (section) observer.unobserve(section);
             });
         };
@@ -97,6 +99,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
                             <nav className="container mx-auto px-4 py-4 flex flex-col items-center md:items-start md:p-4 gap-4">
                                 <button onClick={() => { onNavigatePage('intro'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('home')}</button>
                                 <button onClick={() => { onNavigatePage('about'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('about')}</button>
+                                <button onClick={() => { onNavigatePage('blog'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('blog')}</button>
                                 <button onClick={() => { onNavigatePage('resources'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('resources')}</button>
                                 <button onClick={() => { onStart(); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('startLearning')}</button>
                                 <button onClick={() => { onOpenBookingModal(); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('bookACall')}</button>
@@ -104,14 +107,14 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
                                     <div className="flex items-center gap-1 p-1 rounded-lg bg-brand-bg justify-center max-w-[120px] mx-auto md:mx-0" role="group" aria-label="Language selection">
                                         <button
                                             className={`flex-1 text-center px-3 py-1 text-sm font-bold rounded-md transition-colors ${language === 'en' ? 'bg-brand-primary text-brand-bg' : 'text-brand-text-secondary hover:bg-brand-surface'}`}
-                                            onClick={() => { if (language !== 'en') toggleLanguage(); }}
+                                            onClick={() => setLanguage('en')}
                                             aria-pressed={language === 'en'}
                                         >
                                             EN
                                         </button>
                                         <button
                                             className={`flex-1 text-center px-3 py-1 text-sm font-bold rounded-md transition-colors ${language === 'es' ? 'bg-brand-primary text-brand-bg' : 'text-brand-text-secondary hover:bg-brand-surface'}`}
-                                            onClick={() => { if (language !== 'es') toggleLanguage(); }}
+                                            onClick={() => setLanguage('es')}
                                             aria-pressed={language === 'es'}
                                         >
                                             ES
@@ -151,11 +154,11 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
                         <h2 className="text-3xl font-bold text-white text-center mb-8">{headline}</h2>
                         {id === 'blog' ? (
                             <div className="max-w-3xl mx-auto">
-                                <a href="https://cryptoax07.wixstudio.com/cryptoax07/blog" target="_blank" rel="noopener noreferrer" className="block group">
+                                <button onClick={() => onNavigatePage('blog')} className="block group w-full text-left">
                                     <Card className="p-0 overflow-hidden bg-brand-surface hover:border-brand-primary transition-all duration-300 card-glow-blue-hover">
                                         <div className="md:flex">
                                             <div className="md:flex-shrink-0">
-                                                <img className="h-48 w-full object-cover md:h-full md:w-64 transition-transform duration-300 group-hover:scale-105" src="https://static.wixstatic.com/media/4a78c1_eba74c01cf294a3aa898cff4e6914944~mv2.png/v1/crop/x_0,y_0,w_417,h_433/fill/w_494,h_520,fp_0.50_0.50,lg_1,q_85,enc_avif,quality_auto/Dise%C3%B1o%20sin%20t%C3%ADtulo.png" alt="CryptoAX07 Blog" />
+                                                <img className="h-48 w-full object-cover md:h-full md:w-64 transition-transform duration-300 group-hover:scale-105" src="https://static.wixstatic.com/media/4a78c1_eba74c01cf294a3aa898cff4e6914944~mv2.png/v1/crop/x_0,y_0,w_417,h_433/fill/w_494,h_520,fp_0.50_0.50,lg_1,q_85,enc_avif,quality_auto/Dise%C3%B1o%20sin%20t%C3%ADtulo.png" alt="CryptoAX07 Blog" loading="lazy" decoding="async" />
                                             </div>
                                             <div className="p-8 text-left flex flex-col justify-center">
                                                 <h3 className="text-2xl font-bold text-white mb-2">{t('resourcesPage.blogTitle')}</h3>
@@ -168,7 +171,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
                                             </div>
                                         </div>
                                     </Card>
-                                </a>
+                                </button>
                             </div>
                         ) : id === 'tracker' ? (
                             <div className="text-center">
@@ -222,4 +225,4 @@ const ResourcesPage: React.FC<ResourcesPageProps> = ({ onStart, onNavigatePage, 
     );
 };
 
-export default ResourcesPage;
+export default React.memo(ResourcesPage);

@@ -32,6 +32,7 @@ const Footer: React.FC<FooterProps> = ({ onStart, onNavigatePage, onOpenBookingM
             <nav className="flex flex-col items-center md:items-start gap-2 text-brand-text-secondary">
               <button onClick={() => onNavigatePage('intro')} className="hover:text-brand-primary transition-colors text-left">{t('home')}</button>
               <button onClick={() => onNavigatePage('about')} className="hover:text-brand-primary transition-colors text-left">{t('about')}</button>
+              <button onClick={() => onNavigatePage('blog')} className="hover:text-brand-primary transition-colors text-left">{t('blog')}</button>
               <button onClick={() => onNavigatePage('resources')} className="hover:text-brand-primary transition-colors text-left">{t('resources')}</button>
               <button onClick={onStart} className="hover:text-brand-primary transition-colors text-left">{t('startLearning')}</button>
               <button onClick={onOpenBookingModal} className="hover:text-brand-primary transition-colors">{t('bookACall')}</button>
@@ -64,6 +65,9 @@ const Footer: React.FC<FooterProps> = ({ onStart, onNavigatePage, onOpenBookingM
               {t('footer.joinExperts')}
               </p>
               <p className="text-xs text-gray-500">
+                &copy; 2024 CryptoAX07 - <button onClick={() => onNavigatePage('admin')} className="hover:text-brand-primary underline">Admin</button>
+              </p>
+              <p className="text-xs text-gray-500 mt-2">
               {t('footer.disclaimer')}
               </p>
           </div>
@@ -73,4 +77,4 @@ const Footer: React.FC<FooterProps> = ({ onStart, onNavigatePage, onOpenBookingM
   );
 };
 
-export default Footer;
+export default React.memo(Footer);

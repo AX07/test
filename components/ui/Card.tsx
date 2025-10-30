@@ -4,7 +4,8 @@ import React from 'react';
 interface CardProps {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
+  // FIX: Update onClick prop to accept a MouseEvent to allow for event handling like stopPropagation.
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {

@@ -68,7 +68,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onStart, onNavigatePage, onOpenBo
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-    const { language, toggleLanguage, t } = useLanguage();
+    const { language, setLanguage, t } = useLanguage();
     
     const [heroRef, heroIsVisible] = useScrollAnimation<HTMLElement>();
     const [teamSectionRef, teamSectionIsVisible] = useScrollAnimation<HTMLElement>();
@@ -148,6 +148,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onStart, onNavigatePage, onOpenBo
                             <nav className="container mx-auto px-4 py-4 flex flex-col items-center md:items-start md:p-4 gap-4">
                                 <button onClick={() => { onNavigatePage('intro'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('home')}</button>
                                 <button onClick={() => { onNavigatePage('about'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('about')}</button>
+                                <button onClick={() => { onNavigatePage('blog'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('blog')}</button>
                                 <button onClick={() => { onNavigatePage('resources'); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('resources')}</button>
                                 <button onClick={() => { onStart(); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('startLearning')}</button>
                                 <button onClick={() => { onOpenBookingModal(); setIsMenuOpen(false); }} className="font-semibold text-white hover:text-brand-primary w-full text-left">{t('bookACall')}</button>
@@ -155,14 +156,14 @@ const AboutPage: React.FC<AboutPageProps> = ({ onStart, onNavigatePage, onOpenBo
                                     <div className="flex items-center gap-1 p-1 rounded-lg bg-brand-bg justify-center max-w-[120px] mx-auto md:mx-0" role="group" aria-label="Language selection">
                                         <button
                                             className={`flex-1 text-center px-3 py-1 text-sm font-bold rounded-md transition-colors ${language === 'en' ? 'bg-brand-primary text-brand-bg' : 'text-brand-text-secondary hover:bg-brand-surface'}`}
-                                            onClick={() => { if (language !== 'en') toggleLanguage(); }}
+                                            onClick={() => setLanguage('en')}
                                             aria-pressed={language === 'en'}
                                         >
                                             EN
                                         </button>
                                         <button
                                             className={`flex-1 text-center px-3 py-1 text-sm font-bold rounded-md transition-colors ${language === 'es' ? 'bg-brand-primary text-brand-bg' : 'text-brand-text-secondary hover:bg-brand-surface'}`}
-                                            onClick={() => { if (language !== 'es') toggleLanguage(); }}
+                                            onClick={() => setLanguage('es')}
                                             aria-pressed={language === 'es'}
                                         >
                                             ES
@@ -207,6 +208,8 @@ const AboutPage: React.FC<AboutPageProps> = ({ onStart, onNavigatePage, onOpenBo
                                             src={coach.imageUrl} 
                                             alt={`Photo of ${coach.name}`} 
                                             className="w-32 h-32 object-cover rounded-full mb-4 border-4 border-brand-surface shadow-lg transition-transform duration-300 group-hover:scale-105 group-hover:border-brand-primary/50"
+                                            loading="lazy"
+                                            decoding="async"
                                         />
                                         <h3 className="text-xl font-bold text-white mb-2">{coach.name}</h3>
                                         <p className="text-sm text-brand-text-secondary text-center flex-grow">{coach.bio}</p>
@@ -324,4 +327,4 @@ const AboutPage: React.FC<AboutPageProps> = ({ onStart, onNavigatePage, onOpenBo
     );
 };
 
-export default AboutPage;
+export default React.memo(AboutPage);
