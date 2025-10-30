@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { CheckCircleIcon, DocumentTextIcon } from '../icons/Icons';
@@ -16,6 +16,7 @@ const KycSim: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   
   const [livenessDirection, setLivenessDirection] = useState<LivenessDirection>('center');
   const [livenessInstruction, setLivenessInstruction] = useState(t('simulations.kyc.lookStraight'));
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     // This effect runs the liveliness check animation sequence
@@ -37,21 +38,24 @@ const KycSim: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             setLivenessInstruction(sequence[currentIndex].text);
             const nextDelay = sequence[currentIndex].delay;
             currentIndex++;
-            setTimeout(runSequence, nextDelay);
+            timeoutRef.current = window.setTimeout(runSequence, nextDelay);
         } else {
-            setTimeout(() => setStep(4), 1500); // Move to next step after completion
+            timeoutRef.current = window.setTimeout(() => setStep(4), 1500); // Move to next step after completion
         }
       };
       
       // Start the sequence
-      const timer = setTimeout(runSequence, 1000);
-
-      // Cleanup function to prevent running on unmount
-      return () => clearTimeout(timer);
+      timeoutRef.current = window.setTimeout(runSequence, 1000);
     }
+    
+    // Cleanup function to prevent running on unmount
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [step, t]);
   
-  // FIX: Added function implementations that were missing due to file truncation.
   const handleIdUpload = () => {
     setIdUploaded(true);
     setTimeout(() => {
@@ -149,7 +153,6 @@ const KycSim: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     }
   };
 
-  // FIX: Added the return statement with JSX to fix the type error.
   return (
     <Card className="max-w-xl mx-auto p-6 md:p-8">
       <h2 className="text-3xl font-bold text-center mb-2 text-white">{t('simulations.kyc.title')}</h2>
@@ -161,5 +164,4 @@ const KycSim: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   );
 };
 
-// FIX: Added the default export to resolve the import error in App.tsx.
 export default KycSim;

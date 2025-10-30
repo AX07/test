@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import type { CompletedSimulation } from '../../types';
 import Card from './Card';

@@ -1,47 +1,17 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from './ui/Button';
 import Card from './ui/Card';
 import { BookOpenIcon, ChartBarSquareIcon, CheckCircleIcon, CpuChipIcon, CubeIcon, DevicePhoneMobileIcon, MenuIcon, PhoneIcon, PuzzlePieceIcon, ShieldCheckIcon, StarIcon, XCircleIcon, XMarkIcon, NewspaperIcon } from './icons/Icons';
 import { Page } from '../types';
 import Footer from './Footer';
 import { useLanguage } from '../hooks/useLanguage';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 interface IntroPageProps {
   onStart: () => void;
   onNavigatePage: (page: Page) => void;
   onOpenBookingModal: () => void;
 }
-
-// Custom hook for scroll-triggered animations
-const useScrollAnimation = <T extends Element>(options?: IntersectionObserverInit) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const ref = useRef<T>(null);
-
-    useEffect(() => {
-        const element = ref.current;
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                setIsVisible(true);
-                if (element) {
-                    observer.unobserve(element);
-                }
-            }
-        }, { threshold: 0.1, ...options });
-
-        if (element) {
-            observer.observe(element);
-        }
-
-        return () => {
-            if (element) {
-                observer.unobserve(element);
-            }
-        };
-    }, [options]);
-
-    return [ref, isVisible] as const;
-};
-
 
 const DcaCalculatorEmbed: React.FC = () => {
   useEffect(() => {

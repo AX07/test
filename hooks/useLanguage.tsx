@@ -1,5 +1,7 @@
+
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
-import { translations } from '../translations';
+// FIX: Add file extension to fix module resolution error.
+import { translations } from '../translations/index.ts';
 
 export type Language = 'en' | 'es';
 
@@ -34,7 +36,8 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         } else {
           newParts = [lang, ...parts];
         }
-        const newPath = `/${newParts.join('/')}`;
+        let newPath = `/${newParts.join('/')}`;
+        if (newPath === '/en') newPath = '/';
         window.history.pushState({}, '', newPath);
     }
   }, [language]);

@@ -10,7 +10,8 @@ export enum View {
   Resources = 'RESOURCES',
 }
 
-export type Page = 'intro' | 'about' | 'app' | 'resources' | 'blog' | 'admin';
+// FIX: Add 'blogpost' to the Page type to allow navigation to individual blog post pages.
+export type Page = 'intro' | 'about' | 'app' | 'resources' | 'blog' | 'admin' | 'blogpost';
 
 export interface CompletedSimulation {
   id: string;
