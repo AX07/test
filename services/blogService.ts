@@ -1,51 +1,67 @@
+
 import { initialBlogPosts } from '../data/blogPosts';
 import type { BlogPost } from '../types';
 
 const BLOG_STORAGE_KEY = 'cryptoax07_blog_posts';
 
-// Helper to create a URL-friendly slug
-export const slugify = (text: string): string => {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')           // Replace spaces with -
-    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-};
-
-export const getPosts = (): BlogPost[] => {
-  let userAddedPosts: BlogPost[] = [];
-  try {
-    const storedPosts = localStorage.getItem(BLOG_STORAGE_KEY);
-    if (storedPosts) {
-      userAddedPosts = JSON.parse(storedPosts);
+// Initialize storage with initial posts if it's empty
+const initializeStorage = () => {
+    if (!localStorage.getItem(BLOG_STORAGE_KEY)) {
+        localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(initialBlogPosts));
     }
-  } catch (error) {
-    console.error("Failed to parse blog posts from localStorage", error);
-  }
-  
-  const allPosts = [...initialBlogPosts, ...userAddedPosts];
-
-  // Simple deduplication based on id, user-added posts might overwrite initial ones if ids clash (unlikely with timestamp IDs)
-  const uniquePosts = Array.from(new Map(allPosts.map(post => [post.id, post])).values());
-  
-  return uniquePosts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 };
 
-export const addPost = (postData: { title: string; summary: string; content: string; imageUrl: string }): BlogPost => {
-  const storedPostsJSON = localStorage.getItem(BLOG_STORAGE_KEY);
-  const storedPosts: BlogPost[] = storedPostsJSON ? JSON.parse(storedPostsJSON) : [];
-  
-  const newPost: BlogPost = {
-    ...postData,
-    id: new Date().toISOString(),
-    slug: slugify(postData.title),
-    publishedAt: new Date().toISOString(),
-  };
+initializeStorage();
 
-  const updatedPosts = [...storedPosts, newPost];
-  localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(updatedPosts));
+export const getBlogPosts = (): BlogPost[] => {
+    try {
+        const postsJson = localStorage.getItem(BLOG_STORAGE_KEY);
+        if (!postsJson) {
+            return [];
+        }
+        const posts = JSON.parse(postsJson) as BlogPost[];
+        // Sort by date, newest first
+        return posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    } catch (error) {
+        console.error("Error fetching blog posts from localStorage:", error);
+        return [];
+    }
+};
 
-  return newPost;
+export const getBlogPostBySlug = (slug: string): BlogPost | undefined => {
+    const posts = getBlogPosts();
+    return posts.find(post => post.slug === slug);
+};
+
+export const addBlogPost = (postData: Omit<BlogPost, 'id' | 'publishedAt'>): BlogPost => {
+    const posts = getBlogPosts();
+    const newPost: BlogPost = {
+        ...postData,
+        id: new Date().getTime().toString(),
+        publishedAt: new Date().toISOString(),
+    };
+    const updatedPosts = [newPost, ...posts];
+    localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(updatedPosts));
+    return newPost;
+};
+
+export const updateBlogPost = (updatedPost: BlogPost): BlogPost | undefined => {
+    const posts = getBlogPosts();
+    const postIndex = posts.findIndex(p => p.id === updatedPost.id);
+    if (postIndex === -1) {
+        return undefined;
+    }
+    posts[postIndex] = updatedPost;
+    localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(posts));
+    return updatedPost;
+};
+
+export const deleteBlogPost = (id: string): boolean => {
+    const posts = getBlogPosts();
+    const updatedPosts = posts.filter(p => p.id !== id);
+    if (posts.length === updatedPosts.length) {
+        return false; // Post not found
+    }
+    localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(updatedPosts));
+    return true;
 };

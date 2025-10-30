@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import type { BlogPost, Page } from '../types';
 import Card from './ui/Card';
@@ -6,28 +5,18 @@ import Button from './ui/Button';
 import Footer from './Footer';
 import { useLanguage } from '../hooks/useLanguage';
 import { MenuIcon, XMarkIcon } from './icons/Icons';
-import useScrollAnimation from '../hooks/useScrollAnimation';
 
-interface BlogPageProps {
-  posts: BlogPost[];
-  onSelectPost: (slug: string) => void;
+interface BlogPostPageProps {
+  post: BlogPost;
   onStart: () => void;
   onNavigatePage: (page: Page) => void;
   onOpenBookingModal: () => void;
 }
 
-const BlogPage: React.FC<BlogPageProps> = ({ posts, onSelectPost, onStart, onNavigatePage, onOpenBookingModal }) => {
+const BlogPostPage: React.FC<BlogPostPageProps> = ({ post, onStart, onNavigatePage, onOpenBookingModal }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { language, setLanguage, t } = useLanguage();
-    
-    const [heroRef, heroIsVisible] = useScrollAnimation<HTMLElement>();
-    const [postRefs, setPostRefs] = useState<React.RefObject<HTMLDivElement>[]>([]);
-    const postVisibility = postRefs.map(ref => useScrollAnimation<HTMLDivElement>({ threshold: 0.2, rootMargin: '0px 0px -100px 0px' })[1]);
-
-    useEffect(() => {
-        setPostRefs(posts.map(() => React.createRef()));
-    }, [posts]);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -35,13 +24,8 @@ const BlogPage: React.FC<BlogPageProps> = ({ posts, onSelectPost, onStart, onNav
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const pageStyle = {
-      backgroundImage: `linear-gradient(rgba(16, 20, 31, 0.95), rgba(16, 20, 31, 0.95)), url('https://static.wixstatic.com/media/4a78c1_f5dc609ad50b43bf9d0d51fe81e09497~mv2.png/v1/fill/w_1156,h_420,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/4a78c1_f5dc609ad50b43bf9d0d51fe81e09497~mv2.png')`,
-      backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
-    };
-
     return (
-        <div style={pageStyle} className="text-brand-text font-sans selection:bg-brand-primary/20 min-h-screen">
+        <div className="text-brand-text font-sans selection:bg-brand-primary/20 app-background min-h-screen">
             <header className={`bg-brand-surface/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-700/50 transition-all duration-300`}>
                 <div className={`container mx-auto px-4 flex justify-between items-center transition-all duration-300 relative ${isScrolled ? 'py-1' : 'py-3'}`}>
                     <a href="#" onClick={(e) => { e.preventDefault(); onNavigatePage('intro'); }} className="flex items-center">
@@ -76,38 +60,24 @@ const BlogPage: React.FC<BlogPageProps> = ({ posts, onSelectPost, onStart, onNav
                     </div>
                 )}
             </header>
-            
-            <main>
-                <section ref={heroRef} className={`py-16 md:py-24 text-center transition-all duration-700 ${heroIsVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white">The CryptoAX07 Blog</h1>
-                    <p className="mt-4 text-lg text-brand-text-secondary max-w-2xl mx-auto">Insights, tutorials, and analysis from our team of crypto experts.</p>
-                </section>
-                
-                <section className="pb-16 md:pb-24">
-                    <div className="container mx-auto px-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {posts.map((post, index) => (
-                                <div key={post.id} ref={postRefs[index]} className={`transition-all duration-500 ${postVisibility[index] ? 'animate-slide-in-up' : 'opacity-0 translate-y-8'}`} style={{transitionDelay: `${index * 100}ms`}}>
-                                    <button onClick={() => onSelectPost(post.slug)} className="w-full text-left h-full">
-                                        <Card className="h-full flex flex-col bg-brand-surface hover:border-brand-primary/50 transition-all duration-300 card-glow-blue-hover group">
-                                            <div className="overflow-hidden">
-                                                <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async"/>
-                                            </div>
-                                            <div className="p-6 flex flex-col flex-grow">
-                                                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand-primary transition-colors">{post.title}</h3>
-                                                <p className="text-sm text-brand-text-secondary flex-grow">{post.summary}</p>
-                                                <div className="mt-4 pt-4 border-t border-gray-700/50 flex justify-between items-center text-xs text-gray-400">
-                                                    <span>{new Date(post.publishedAt).toLocaleDateString(language, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                                    <span className="font-semibold text-brand-primary group-hover:underline">Read More &rarr;</span>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </button>
-                                </div>
+
+            <main className="container mx-auto px-4 py-16">
+                <Card className="max-w-4xl mx-auto bg-brand-surface animate-fade-in">
+                    <img src={post.imageUrl} alt={post.title} className="h-64 md:h-96 w-full object-cover rounded-t-xl" />
+                    <article className="p-6 md:p-10">
+                        <div className="mb-6">
+                           <Button onClick={() => onNavigatePage('blog')} className="text-sm py-1 px-3">&larr; {t('blogPage.backToList')}</Button>
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight">{post.title}</h1>
+                        <p className="text-sm text-gray-400 mb-8">{new Date(post.publishedAt).toLocaleDateString(language, { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        
+                        <div className="prose prose-lg prose-invert max-w-none text-brand-text leading-relaxed" style={{whiteSpace: 'pre-wrap'}}>
+                            {post.content.split('\n\n').map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
                             ))}
                         </div>
-                    </div>
-                </section>
+                    </article>
+                </Card>
             </main>
 
             <Footer onStart={onStart} onNavigatePage={onNavigatePage} onOpenBookingModal={onOpenBookingModal} />
@@ -115,4 +85,4 @@ const BlogPage: React.FC<BlogPageProps> = ({ posts, onSelectPost, onStart, onNav
     );
 };
 
-export default BlogPage;
+export default BlogPostPage;

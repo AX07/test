@@ -1,45 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from './ui/Button';
 import Card from './ui/Card';
 import { MenuIcon, XMarkIcon, CreditCardIcon, VideoCameraIcon, ChatBubbleBottomCenterTextIcon, PhoneIcon, CheckCircleIcon, BanknotesIcon, ShieldCheckIcon, LightBulbIcon, ChevronDownIcon } from './icons/Icons';
 import { Page } from '../types';
 import Footer from './Footer';
 import { useLanguage } from '../hooks/useLanguage';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 interface AboutPageProps {
   onStart: () => void;
   onNavigatePage: (page: Page) => void;
   onOpenBookingModal: () => void;
 }
-
-const useScrollAnimation = <T extends Element>(options?: IntersectionObserverInit) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const ref = useRef<T>(null);
-
-    useEffect(() => {
-        const element = ref.current;
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) {
-                setIsVisible(true);
-                if (element) {
-                    observer.unobserve(element);
-                }
-            }
-        }, { threshold: 0.1, ...options });
-
-        if (element) {
-            observer.observe(element);
-        }
-
-        return () => {
-            if (element) {
-                observer.unobserve(element);
-            }
-        };
-    }, [options]);
-
-    return [ref, isVisible] as const;
-};
 
 const coaches = [
     {

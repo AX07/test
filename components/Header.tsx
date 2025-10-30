@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ userProgress, onNavigate, onNavigatePag
             <button 
               onClick={() => onNavigate(View.Progress)}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-brand-surface/50 transition-colors" 
-              title={t('viewYourProgress')}
+              aria-label={t('viewYourProgress')}
             >
               <StarIcon className="h-6 w-6 text-yellow-400" />
               <span className="font-semibold text-white">{userProgress.xp} XP</span>
@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ userProgress, onNavigate, onNavigatePag
             <button 
               onClick={() => onNavigate(View.Progress)}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-brand-surface/50 transition-colors"
-              title={t('viewYourProgress')}
+              aria-label={t('viewYourProgress')}
             >
               <ShieldCheckIcon className="h-6 w-6 text-brand-secondary" />
               <span className="font-semibold text-white">{userProgress.badges.length}</span>
@@ -82,14 +82,14 @@ const Header: React.FC<HeaderProps> = ({ userProgress, onNavigate, onNavigatePag
             <button 
               onClick={() => onNavigate(View.Progress)}
               className="p-2 rounded-lg hover:bg-brand-surface/50 transition-colors" 
-              title={t('viewYourProgress')}
+              aria-label={t('viewYourProgress')}
             >
               <StarIcon className="h-6 w-6 text-yellow-400" />
             </button>
             <button 
               onClick={() => onNavigate(View.Progress)}
               className="p-2 rounded-lg hover:bg-brand-surface/50 transition-colors"
-              title={t('viewYourProgress')}
+              aria-label={t('viewYourProgress')}
             >
               <ShieldCheckIcon className="h-6 w-6 text-brand-secondary" />
             </button>
